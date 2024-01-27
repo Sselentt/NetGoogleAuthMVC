@@ -10,16 +10,19 @@ namespace NetGoogleAuthMVC.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public HomeController(ILogger<HomeController> logger,UserManager<IdentityUser> userManager)
+        public HomeController(ILogger<HomeController> logger,UserManager<IdentityUser> userManager,SignInManager<IdentityUser> signInManager)
         {
             _logger = logger;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var externalLogin=(await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            return View(externalLogin);
         }
 
         public IActionResult Privacy()
@@ -59,7 +62,20 @@ namespace NetGoogleAuthMVC.Controllers
             }
 
         }
+        
+        [HttpPost]
+        public IActionResult GoogleLogin(string provider)
+        {
+            var redirectUrl = Url.Action("GoogleLoginCallBack", "Home");
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider,redirectUrl);
 
+            return Challenge(properties,provider);
+        }
+
+        public IActionResult GoogleLoginCallBack()
+        {
+            return View();
+        }
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,8 +1,13 @@
-﻿@{
+﻿@model List<Microsoft.AspNetCore.Authentication.AuthenticationScheme>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <form method="post" asp-action="GoogleLogin" asp-controller="Home">
+        <div>
+            @foreach (var provider in Model)
+            {
+                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name">@provider.DisplayName</button>
+            }
+        </div>
+    </form>

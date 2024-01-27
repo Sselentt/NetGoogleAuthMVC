@@ -21,7 +21,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 })
     .AddEntityFrameworkStores<AuthDBContext>();
 
-
+//Google Auth Service
+builder.Services.AddAuthentication().AddGoogle(x =>
+{
+    x.ClientId = builder.Configuration["Google:ClientId"];
+    x.ClientSecret = builder.Configuration["Google:ClientSecret"];
+});
 
 
 
